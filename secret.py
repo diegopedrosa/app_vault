@@ -3,13 +3,14 @@ from boto3.dynamodb.conditions import Key
 import time
 import hashlib
 import json
+import os
 from cryptothis import encrypt, decrypt
 
 class secret():
  
  def __init__(self):
   self.dynamodb = boto3.resource('dynamodb')
-  self.table = self.dynamodb.Table('SecretAPP')
+  self.table = self.dynamodb.Table(os.environ['secret_table'])
   
  def get_hashid(self,event):
   return str(hashlib.sha256(str(event['pathParameters']['environment']+event['pathParameters']['application']+event['pathParameters']['type']+event['pathParameters']['data']).encode('utf-8')).hexdigest())
@@ -52,7 +53,7 @@ class secret():
  def get(self,event):
   
   result = {}
-  print(event)
+
 
   key = {
       'hashID': self.get_hashid(event)
